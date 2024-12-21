@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers.AdminArea;
 
 [ApiVersion("1")]
-[Tags("admin-area-auth")]
 [Route("api/v{version:apiVersion}/admin/auth")]
 public class AdminAuthController : ApiController
 {
