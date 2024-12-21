@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>91e2ac6f-eb19-4fdf-8364-d2f6d8088eb6</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Content Include="Properties\launchSettings.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Asp.Versioning.Mvc" Version="8.0.0" />
+		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Filters\" />
+	</ItemGroup>
+
+</Project>
