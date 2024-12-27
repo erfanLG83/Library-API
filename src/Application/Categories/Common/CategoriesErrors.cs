@@ -1,4 +1,4 @@
-﻿namespace Application.Categories;
+﻿namespace Application.Categories.Common;
 
 public static class CategoriesErrors
 {

@@ -1,4 +1,5 @@
-﻿using Application.Common.Extensions;
+﻿using Application.Categories.Common.Models;
+using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 namespace Application.Categories.Queries.GetAll;
@@ -22,11 +23,7 @@ public class GetAllCategoriesHandler : IRequestHandler<GetAllCategoriesQuery, Ge
             .OrderBy(x => x.Title)
             .Skip(request.Skip)
             .Take(request.PageSize)
-            .Select(x => new GetAllCategoriesResponse.Item
-            {
-                Id = x.Id,
-                Title = x.Title
-            })
+            .Select(x => new CategoryDto(x.Id, x.Title))
             .ToListAsync(cancellationToken);
 
         return new(items, totalCount, request.PageIndex, request.PageSize);

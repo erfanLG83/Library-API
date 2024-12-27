@@ -1,4 +1,4 @@
-﻿namespace Application.Authors;
+﻿namespace Application.Authors.Common;
 
 public static class AuthorErrors
 {

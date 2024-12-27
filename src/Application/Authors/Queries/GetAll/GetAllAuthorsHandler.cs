@@ -1,4 +1,5 @@
-﻿using Application.Common.Extensions;
+﻿using Application.Authors.Common.Models;
+using Application.Common.Extensions;
 using Application.Common.Interfaces;
 
 namespace Application.Authors.Queries.GetAll;
@@ -22,12 +23,7 @@ public class GetAllAuthorsHandler : IRequestHandler<GetAllAuthorsQuery, GetAllAu
             .OrderBy(x => x.LastName)
             .Skip(request.Skip)
             .Take(request.PageSize)
-            .Select(x => new GetAllAuthorsResponse.Item
-            {
-                FirstName = x.FirstName,
-                Id = x.Id,
-                LastName = x.LastName,
-            })
+            .Select(x => new AuthorDto(x.Id, x.FirstName, x.LastName))
             .ToListAsync(cancellationToken);
 
         return new(items, totalCount, request.PageIndex, request.PageSize);

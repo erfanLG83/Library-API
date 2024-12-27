@@ -2,6 +2,7 @@
 using Domain.Entities.AuthorAggregate;
 using Domain.Entities.BookAggregate;
 using Domain.Entities.CategoryAggregate;
+using Domain.Entities.PublisherAggregate;
 using Domain.Entities.UserAggregate;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
@@ -16,13 +17,13 @@ public class ApplicationDbContext : IApplicationDbContext
     {
         var mongoSection = configuration.GetRequiredSection("ConnectionStrings")
             .GetRequiredSection("Mongo");
-        var settings = new MongoClientSettings()
+        var settings = new MongoClientSettings
         {
             AllowInsecureTls = true,
             ApplicationName = "LibraryApi",
             ConnectTimeout = TimeSpan.FromSeconds(30),
             Server = new MongoServerAddress(mongoSection["Ip"]!, int.Parse(mongoSection["Port"]!)),
-            Credential = MongoCredential.CreateCredential("admin", mongoSection["Username"], mongoSection["Password"])
+            Credential = MongoCredential.CreateCredential("admin", mongoSection["Username"], mongoSection["Password"]),
         };
 
         _client = new MongoClient(settings);
@@ -43,4 +44,8 @@ public class ApplicationDbContext : IApplicationDbContext
 
     public IMongoCollection<BorrowedBook> BorrowedBooks => _database.GetCollection<BorrowedBook>("BorrowedBookssers");
     public IQueryable<BorrowedBook> BorrowedBooksQuery => BorrowedBooks.AsQueryable();
+
+    public IMongoCollection<Publisher> Publishers => _database.GetCollection<Publisher>("Publishers");
+
+    public IQueryable<Publisher> PublishersQuery => Publishers.AsQueryable();
 }

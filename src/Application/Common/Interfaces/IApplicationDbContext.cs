@@ -1,6 +1,7 @@
 ﻿using Domain.Entities.AuthorAggregate;
 using Domain.Entities.BookAggregate;
 using Domain.Entities.CategoryAggregate;
+using Domain.Entities.PublisherAggregate;
 using Domain.Entities.UserAggregate;
 
 namespace Application.Common.Interfaces;
@@ -18,6 +19,9 @@ public interface IApplicationDbContext
 
     public IMongoCollection<Category> Categories { get; }
     public IQueryable<Category> CategoriesQuery { get; }
+
+    public IMongoCollection<Publisher> Publishers { get; }
+    public IQueryable<Publisher> PublishersQuery { get; }
 
     public IMongoCollection<BorrowedBook> BorrowedBooks { get; }
     public IQueryable<BorrowedBook> BorrowedBooksQuery { get; }
