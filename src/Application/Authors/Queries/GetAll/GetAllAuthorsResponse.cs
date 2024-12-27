@@ -1,8 +1,13 @@
-﻿namespace Application.Authors.Queries.GetAll;
+﻿using Application.Common.Models;
 
-public record GetAllAuthorsResponse
+namespace Application.Authors.Queries.GetAll;
+
+public record GetAllAuthorsResponse : PaginatedList<GetAllAuthorsResponse.Item>
 {
-    public required List<Item> Items { get; init; }
+    public GetAllAuthorsResponse(IReadOnlyList<Item> items, int totalCount, int pageIndex, int pageSize) : base(items, totalCount, pageIndex, pageSize)
+    {
+    }
+
     public record Item
     {
         public required string Id { get; init; }

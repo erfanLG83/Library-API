@@ -1,3 +1,5 @@
-﻿namespace Application.Authors.Queries.GetAll;
+﻿using Application.Common.Models;
 
-public record GetAllAuthorsQuery() : IRequest<GetAllAuthorsResponse>;
+namespace Application.Authors.Queries.GetAll;
+
+public record GetAllAuthorsQuery(string? SearchTerm) : PaginationDto, IRequest<GetAllAuthorsResponse>;

@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Extensions;
+using Application.Common.Interfaces;
 
 namespace Application.Authors.Queries.GetAll;
 
@@ -13,8 +14,14 @@ public class GetAllAuthorsHandler : IRequestHandler<GetAllAuthorsQuery, GetAllAu
 
     public async Task<GetAllAuthorsResponse> Handle(GetAllAuthorsQuery request, CancellationToken cancellationToken)
     {
-        var items = await _dbContext.AuthorsQuery
+        var query = _dbContext.AuthorsQuery
+            .When(request.SearchTerm is not null, x => (x.FirstName + " " + x.LastName).Contains(request.SearchTerm!));
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query
             .OrderBy(x => x.LastName)
+            .Skip(request.Skip)
+            .Take(request.PageSize)
             .Select(x => new GetAllAuthorsResponse.Item
             {
                 FirstName = x.FirstName,
@@ -23,9 +30,6 @@ public class GetAllAuthorsHandler : IRequestHandler<GetAllAuthorsQuery, GetAllAu
             })
             .ToListAsync(cancellationToken);
 
-        return new()
-        {
-            Items = items
-        };
+        return new(items, totalCount, request.PageIndex, request.PageSize);
     }
 }

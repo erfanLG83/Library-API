@@ -10,9 +10,9 @@ namespace Api.Controllers.AdminArea;
 
 [ApiVersion("1")]
 [Route("api/v{version:apiVersion}/admin/authors")]
-public class AdmingAuthorsController : ApiController
+public class AdminAuthorsController : ApiController
 {
-    public AdmingAuthorsController(IMediator mediator, ICurrentUserService currentUserService) : base(mediator, currentUserService)
+    public AdminAuthorsController(IMediator mediator, ICurrentUserService currentUserService) : base(mediator, currentUserService)
     {
     }
 
@@ -41,9 +41,8 @@ public class AdmingAuthorsController : ApiController
     }
 
     [HttpGet]
-    public async Task<ActionResult<GetAllAuthorsResponse>> GetAll()
+    public async Task<ActionResult<GetAllAuthorsResponse>> GetAll([FromQuery] GetAllAuthorsQuery query)
     {
-        var query = new GetAllAuthorsQuery();
         var response = await _mediator.Send(query, CancellationToken);
 
         return Ok(response);
