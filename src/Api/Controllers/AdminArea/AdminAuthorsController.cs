@@ -1,4 +1,5 @@
 ﻿using Application.Authors.Commands.Create;
+using Application.Authors.Commands.Delete;
 using Application.Authors.Commands.Update;
 using Application.Authors.Queries.GetAll;
 using Application.Common.Interfaces;

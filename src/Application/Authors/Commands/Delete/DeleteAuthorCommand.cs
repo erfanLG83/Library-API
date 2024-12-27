@@ -1,4 +1,4 @@
-﻿namespace Application.Authors.Commands.Update;
+﻿namespace Application.Authors.Commands.Delete;
 
 public class DeleteAuthorCommand : IRequest<Result>
 {

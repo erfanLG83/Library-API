@@ -1,6 +1,6 @@
 ﻿using Application.Common.Interfaces;
 
-namespace Application.Authors.Commands.Update;
+namespace Application.Authors.Commands.Delete;
 
 public class DeleteAuthorHandler : IRequestHandler<DeleteAuthorCommand, Result>
 {
