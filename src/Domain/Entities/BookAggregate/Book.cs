@@ -16,6 +16,7 @@ public class Book : Entity, ISoftDelete
     public required string PublicationDate { get; set; }
     public required BookLanguage Language { get; set; }
     public required int Quantity { get; set; }
+    public required DateTime CreatedAt { get; set; }
 
     [BsonRepresentation(BsonType.ObjectId)]
     public required string AuthorId { get; set; }

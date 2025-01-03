@@ -1,4 +1,4 @@
-﻿using Application.Authors;
+﻿using Application.Books.Common;
 using Application.Common.Interfaces;
 
 namespace Application.Books.Commands.Update;

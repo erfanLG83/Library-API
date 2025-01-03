@@ -17,6 +17,7 @@ public record GetAllBooksResponse : PaginatedList<GetAllBooksResponse.Item>
         public required string Id { get; init; }
         public required string Title { get; set; }
         public required string Description { get; set; }
+        public required DateTime CreatedAt { get; set; }
         public required string? Interpreters { get; set; }
         public required string PublicationDate { get; set; }
         public required BookLanguage Language { get; set; }

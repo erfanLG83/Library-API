@@ -1,4 +1,4 @@
-﻿namespace Application.Authors;
+﻿namespace Application.Books.Common;
 
 public static class BooksErrors
 {

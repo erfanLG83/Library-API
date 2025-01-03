@@ -5,6 +5,7 @@ using Domain.Entities.CategoryAggregate;
 using Domain.Entities.PublisherAggregate;
 using Domain.Entities.UserAggregate;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 
 namespace Infrastructure.Persistence;
@@ -13,8 +14,9 @@ public class ApplicationDbContext : IApplicationDbContext
 {
     private readonly MongoClient _client;
     private readonly IMongoDatabase _database;
-    public ApplicationDbContext(IConfiguration configuration)
+    public ApplicationDbContext(IConfiguration configuration, ILoggerFactory loggerFactory)
     {
+
         var mongoSection = configuration.GetRequiredSection("ConnectionStrings")
             .GetRequiredSection("Mongo");
         var settings = new MongoClientSettings
@@ -24,6 +26,7 @@ public class ApplicationDbContext : IApplicationDbContext
             ConnectTimeout = TimeSpan.FromSeconds(30),
             Server = new MongoServerAddress(mongoSection["Ip"]!, int.Parse(mongoSection["Port"]!)),
             Credential = MongoCredential.CreateCredential("admin", mongoSection["Username"], mongoSection["Password"]),
+            LoggingSettings = new(loggerFactory)
         };
 
         _client = new MongoClient(settings);

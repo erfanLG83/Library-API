@@ -1,5 +1,8 @@
-﻿using Application.Common.Extensions;
+﻿using Application.Books.Common.Models;
+using Application.Common.Extensions;
 using Application.Common.Interfaces;
+using Domain.Entities.BookAggregate;
+using System.Linq.Expressions;
 
 namespace Application.Books.Queries.GetAll;
 
@@ -19,8 +22,17 @@ public class GetAllBooksHandler : IRequestHandler<GetAllBooksQuery, GetAllBooksR
             .When(request.SearchTerm is not null, x => x.Title.Contains(request.SearchTerm!));
 
         var totalCount = await query.CountAsync(cancellationToken);
+
+        Expression<Func<Book, object>> orderBy = request.OrderBy switch
+        {
+            BooksOrderBy.Title => x => x.Title,
+            BooksOrderBy.CreatedDate => x => x.CreatedAt,
+            _ => throw new NotImplementedException($"Sort by {request.OrderBy} not implemented"),
+        };
+
+        query = request.IsDescending ? query.OrderByDescending(orderBy) : query.OrderBy(orderBy);
+
         var items = await query
-            .OrderBy(x => x.Title)
             .Skip(request.Skip)
             .Take(request.PageSize)
             .Join(_dbContext.Publishers, x => x.PublisherId, x => x.Id, (book, publisher) => new
@@ -45,6 +57,7 @@ public class GetAllBooksHandler : IRequestHandler<GetAllBooksQuery, GetAllBooksR
             {
                 Id = x.book.Id,
                 Description = x.book.Description,
+                CreatedAt = x.book.CreatedAt,
                 Interpreters = x.book.Interpreters,
                 Language = x.book.Language,
                 PublicationDate = x.book.PublicationDate,
