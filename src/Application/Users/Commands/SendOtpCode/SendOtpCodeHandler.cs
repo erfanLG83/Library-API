@@ -34,7 +34,7 @@ public class SendOtpCodeHandler : IRequestHandler<SendOtpCodeCommand, Result<Sen
         var otpCode = OTPCodeGenerator.GenerateCode();
         await _smsService.SendOtpCodeAsync(request.PhoneNumber, otpCode, cancellationToken);
 
-        _memoryCache.Set(cacheKey, otpCode);
+        _memoryCache.Set(cacheKey, otpCode, _otpCodeTtl);
 
         return new SendOtpCodeResponse(_otpCodeTtl, !phoneNumberExists);
     }

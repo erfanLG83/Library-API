@@ -1,15 +1,18 @@
-﻿using Application.Books.Commands.Create;
+﻿using Api.Authorization;
+using Application.Books.Commands.Create;
 using Application.Books.Commands.Delete;
 using Application.Books.Commands.Update;
 using Application.Books.Queries.GetAll;
 using Application.Common.Interfaces;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers.AdminArea;
 
 [ApiVersion("1")]
+[Authorize(Policy = AppAuthorizationPolicies.SuperAdminPolicy)]
 [Route("api/v{version:apiVersion}/admin/books")]
 public class AdminBooksController : ApiController
 {

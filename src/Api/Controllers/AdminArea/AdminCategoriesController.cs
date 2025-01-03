@@ -1,15 +1,18 @@
-﻿using Application.Categories.Commands.Create;
+﻿using Api.Authorization;
+using Application.Categories.Commands.Create;
 using Application.Categories.Commands.Delete;
 using Application.Categories.Commands.Update;
 using Application.Categories.Queries.GetAll;
 using Application.Common.Interfaces;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers.AdminArea;
 
 [ApiVersion("1")]
+[Authorize(Policy = AppAuthorizationPolicies.SuperAdminPolicy)]
 [Route("api/v{version:apiVersion}/admin/categories")]
 public class AdminCategoriesController : ApiController
 {

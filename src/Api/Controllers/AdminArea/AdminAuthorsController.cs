@@ -1,15 +1,18 @@
-﻿using Application.Authors.Commands.Create;
+﻿using Api.Authorization;
+using Application.Authors.Commands.Create;
 using Application.Authors.Commands.Delete;
 using Application.Authors.Commands.Update;
 using Application.Authors.Queries.GetAll;
 using Application.Common.Interfaces;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers.AdminArea;
 
 [ApiVersion("1")]
+[Authorize(Policy = AppAuthorizationPolicies.SuperAdminPolicy)]
 [Route("api/v{version:apiVersion}/admin/authors")]
 public class AdminAuthorsController : ApiController
 {
