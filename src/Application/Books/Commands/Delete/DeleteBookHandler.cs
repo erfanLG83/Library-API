@@ -1,5 +1,8 @@
 ﻿using Application.Books.Common;
+using Application.Books.Common.Models;
 using Application.Common.Interfaces;
+using Elastic.Clients.Elasticsearch;
+using Result = Application.Common.Result;
 
 namespace Application.Books.Commands.Delete;
 
@@ -7,11 +10,13 @@ public class DeleteBookHandler : IRequestHandler<DeleteBookCommand, Result>
 {
     private readonly IApplicationDbContext _dbContext;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly ElasticsearchClient _elasticsearch;
 
-    public DeleteBookHandler(IApplicationDbContext dbContext, IDateTimeProvider dateTimeProvider)
+    public DeleteBookHandler(IApplicationDbContext dbContext, IDateTimeProvider dateTimeProvider, ElasticsearchClient elasticsearch)
     {
         _dbContext = dbContext;
         _dateTimeProvider = dateTimeProvider;
+        _elasticsearch = elasticsearch;
     }
 
     public async Task<Result> Handle(DeleteBookCommand request, CancellationToken cancellationToken)
@@ -23,6 +28,17 @@ public class DeleteBookHandler : IRequestHandler<DeleteBookCommand, Result>
         }
 
         book.DeletedAt = _dateTimeProvider.Now;
+
+
+        var elasticResponse = await _elasticsearch.DeleteByQueryAsync<BookDto>(x =>
+            x.Query(q =>
+                q.Term(t =>
+                    t.Field(f => f.Id).Value(request.Id))), CancellationToken.None);
+        if (!elasticResponse.IsValidResponse)
+        {
+            await _dbContext.Books.DeleteOneAsync(x => x.Id == book.Id, CancellationToken.None);
+            throw new Exception("Failed to delete book in elastic");
+        }
 
         await _dbContext.Books.ReplaceOneAsync(x => x.Id == request.Id, book, cancellationToken: cancellationToken);
 

@@ -53,7 +53,7 @@ public class GetAllBooksHandler : IRequestHandler<GetAllBooksQuery, GetAllBooksR
                 result.category,
                 auther
             })
-            .Select(x => new GetAllBooksResponse.Item
+            .Select(x => new BookDto
             {
                 Id = x.book.Id,
                 Description = x.book.Description,

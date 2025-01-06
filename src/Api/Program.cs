@@ -1,7 +1,10 @@
 using Api;
 using Application;
+using Application.Books.Queries.GetAll;
+using Elastic.Clients.Elasticsearch;
 using Infrastructure;
 using Infrastructure.Persistence;
+using MediatR;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Web.Middlewares;
@@ -66,9 +69,34 @@ app.Run();
 static async Task StartupTasksAsync(IApplicationBuilder app)
 {
     var logger = app.ApplicationServices.GetRequiredService<ILogger<Program>>();
+    var elastic = app.ApplicationServices.GetRequiredService<ElasticsearchClient>();
+
     try
     {
         await InitializeDatabaseAsync(app);
+        await InitializeElasticsearchAsync(logger, elastic);
+
+        var countResponse = await elastic.CountAsync();
+        if (countResponse.IsValidResponse == false)
+            throw new Exception("Failed to get count of documents from elasticsearch");
+
+        if (true) // feature flag - manual change
+        {
+            var mediator = app.ApplicationServices
+                .CreateScope()
+                .ServiceProvider
+                .GetRequiredService<IMediator>();
+
+            var books = await mediator.Send(new GetAllBooksQuery(null)
+            {
+                PageIndex = 1,
+                PageSize = int.MaxValue
+            });
+
+
+            await elastic.IndexManyAsync(books.Items);
+        }
+
     }
     catch (Exception ex)
     {
@@ -84,6 +112,16 @@ static async Task InitializeDatabaseAsync(IApplicationBuilder app)
     var initializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
 
     await initializer.SeedDataAsync();
+}
+
+static async Task InitializeElasticsearchAsync(ILogger<Program> logger, ElasticsearchClient elastic)
+{
+    var elasticResponse = await elastic.HealthReportAsync();
+    if (elasticResponse.IsSuccess() == false)
+    {
+        logger.LogCritical("Elasticsearch healthcheck failed | {@ElasticResponse}", elasticResponse);
+        throw new Exception("Elasticsearch healthcheck failed");
+    }
 }
 
 public partial class Program { }
