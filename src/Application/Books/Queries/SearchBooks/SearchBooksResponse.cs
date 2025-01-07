@@ -1,6 +1,7 @@
 ﻿using Application.Authors.Common.Models;
 using Application.Categories.Common.Models;
 using Application.Common.Models;
+using Domain.Entities.BookAggregate;
 
 namespace Application.Books.Queries.SearchBooks;
 
@@ -16,5 +17,7 @@ public record SearchBooksResponse : PaginatedList<SearchBooksResponse.Item>
         public required string Title { get; init; }
         public required CategoryDto Category { get; init; }
         public required AuthorDto Author { get; init; }
+        public required string? Image { get; set; }
+        public required List<BookInBranch> BookInBranches { get; set; }
     }
 }

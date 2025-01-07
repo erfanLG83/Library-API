@@ -1,4 +1,5 @@
 ﻿using Application.Books.Common.Models;
+using Domain.Enums;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.QueryDsl;
 using System.Linq.Expressions;
@@ -60,6 +61,18 @@ public class SearchBooksHandler : IRequestHandler<SearchBooksQuery, SearchBooksR
             ));
         }
 
+        if (request.Branch == LibraryBranch.Branch1)
+        {
+            filters.Add(q => q.Range(t => t
+                .NumberRange(nr => nr.Field(x => x.Branch1Quantity).Gte(1))));
+        }
+
+        if (request.Branch == LibraryBranch.Branch2)
+        {
+            filters.Add(q => q.Range(t => t
+                .NumberRange(nr => nr.Field(x => x.Branch2Quantity).Gte(1))));
+        }
+
         var searchResponse = await _elasticsearch.SearchAsync<BookDto>(s => s
             .From(request.Skip)
             .Size(request.PageSize)
@@ -76,7 +89,9 @@ public class SearchBooksHandler : IRequestHandler<SearchBooksQuery, SearchBooksR
             Author = x.Author,
             Category = x.Category,
             Id = x.Id,
-            Title = x.Title
+            Title = x.Title,
+            BookInBranches = x.BookInBranches,
+            Image = x.Image
         }).ToList();
 
         return new SearchBooksResponse(items, (int)searchResponse.Total, request.PageIndex, request.PageSize);

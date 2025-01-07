@@ -10,12 +10,14 @@ public class CreateBookHandler : IRequestHandler<CreateBookCommand>
     private readonly IApplicationDbContext _dbContext;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly ElasticsearchClient _elasticsearch;
+    private readonly IFileManager _fileManager;
 
-    public CreateBookHandler(IApplicationDbContext dbContext, IDateTimeProvider dateTimeProvider, ElasticsearchClient elasticsearch)
+    public CreateBookHandler(IApplicationDbContext dbContext, IDateTimeProvider dateTimeProvider, ElasticsearchClient elasticsearch, IFileManager fileManager)
     {
         _dbContext = dbContext;
         _dateTimeProvider = dateTimeProvider;
         _elasticsearch = elasticsearch;
+        _fileManager = fileManager;
     }
 
     public async Task Handle(CreateBookCommand request, CancellationToken cancellationToken)
@@ -33,10 +35,15 @@ public class CreateBookHandler : IRequestHandler<CreateBookCommand>
             Language = request.Language,
             PublicationDate = request.PublicationDate,
             PublisherId = request.PublisherId,
-            Quantity = request.Quantity,
+            BookInBranches = request.BookInBranches,
             Title = request.Title,
             Interpreters = request.Interpreters,
         };
+
+        if (request.Image != null)
+        {
+            book.Image = await _fileManager.SaveFileAsync(request.Image, IFileManager.Folders.Books, cancellationToken);
+        }
 
         await _dbContext.Books.InsertOneAsync(book, cancellationToken: cancellationToken);
 
@@ -51,8 +58,9 @@ public class CreateBookHandler : IRequestHandler<CreateBookCommand>
             Interpreters = book.Interpreters,
             Language = book.Language,
             PublicationDate = book.PublicationDate,
-            Quantity = book.Quantity,
-            Title = book.Title
+            Title = book.Title,
+            Image = book.Image,
+            BookInBranches = book.BookInBranches,
         };
 
         var response = await _elasticsearch.CreateAsync(bookDto, CancellationToken.None);

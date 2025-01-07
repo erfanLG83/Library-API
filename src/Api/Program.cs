@@ -1,5 +1,6 @@
 using Api;
 using Application;
+using Application.Books.Common.Models;
 using Application.Books.Queries.GetAll;
 using Elastic.Clients.Elasticsearch;
 using Infrastructure;
@@ -122,6 +123,12 @@ static async Task InitializeElasticsearchAsync(ILogger<Program> logger, Elastics
         logger.LogCritical("Elasticsearch healthcheck failed | {@ElasticResponse}", elasticResponse);
         throw new Exception("Elasticsearch healthcheck failed");
     }
+
+    await elastic.Indices.PutMappingAsync<BookDto>(mappings => mappings
+        .Indices("books")
+        .Properties(properties => properties
+            .Nested(x => x.BookInBranches)
+        ));
 }
 
 public partial class Program { }

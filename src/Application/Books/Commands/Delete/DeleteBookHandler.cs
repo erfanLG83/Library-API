@@ -10,13 +10,15 @@ public class DeleteBookHandler : IRequestHandler<DeleteBookCommand, Result>
 {
     private readonly IApplicationDbContext _dbContext;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IFileManager _fileManager;
     private readonly ElasticsearchClient _elasticsearch;
 
-    public DeleteBookHandler(IApplicationDbContext dbContext, IDateTimeProvider dateTimeProvider, ElasticsearchClient elasticsearch)
+    public DeleteBookHandler(IApplicationDbContext dbContext, IDateTimeProvider dateTimeProvider, ElasticsearchClient elasticsearch, IFileManager fileManager)
     {
         _dbContext = dbContext;
         _dateTimeProvider = dateTimeProvider;
         _elasticsearch = elasticsearch;
+        _fileManager = fileManager;
     }
 
     public async Task<Result> Handle(DeleteBookCommand request, CancellationToken cancellationToken)
@@ -38,6 +40,11 @@ public class DeleteBookHandler : IRequestHandler<DeleteBookCommand, Result>
         {
             await _dbContext.Books.DeleteOneAsync(x => x.Id == book.Id, CancellationToken.None);
             throw new Exception("Failed to delete book in elastic");
+        }
+
+        if (book.Image != null)
+        {
+            _fileManager.Delete(book.Image);
         }
 
         await _dbContext.Books.ReplaceOneAsync(x => x.Id == request.Id, book, cancellationToken: cancellationToken);

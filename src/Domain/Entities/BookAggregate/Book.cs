@@ -13,9 +13,10 @@ public class Book : Entity, ISoftDelete
     public required string Title { get; set; }
     public required string Description { get; set; }
     public string? Interpreters { get; set; }
+    public string? Image { get; set; }
+    public List<BookInBranch> BookInBranches { get; set; } = [];
     public required string PublicationDate { get; set; }
     public required BookLanguage Language { get; set; }
-    public required int Quantity { get; set; }
     public required DateTime CreatedAt { get; set; }
 
     [BsonRepresentation(BsonType.ObjectId)]

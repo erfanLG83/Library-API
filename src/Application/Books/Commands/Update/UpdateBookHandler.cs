@@ -9,12 +9,14 @@ namespace Application.Books.Commands.Update;
 public class UpdateBookHandler : IRequestHandler<UpdateBookCommand, Result>
 {
     private readonly IApplicationDbContext _dbContext;
+    private readonly IFileManager _fileManager;
     private readonly ElasticsearchClient _elasticsearch;
 
-    public UpdateBookHandler(IApplicationDbContext dbContext, ElasticsearchClient elasticsearch)
+    public UpdateBookHandler(IApplicationDbContext dbContext, ElasticsearchClient elasticsearch, IFileManager fileManager)
     {
         _dbContext = dbContext;
         _elasticsearch = elasticsearch;
+        _fileManager = fileManager;
     }
 
     public async Task<Result> Handle(UpdateBookCommand request, CancellationToken cancellationToken)
@@ -35,8 +37,18 @@ public class UpdateBookHandler : IRequestHandler<UpdateBookCommand, Result>
         book.Interpreters = request.Interpreters;
         book.Language = request.Language;
         book.PublicationDate = request.PublicationDate;
-        book.Quantity = request.Quantity;
+        book.BookInBranches = request.BookInBranches;
         book.Title = request.Title;
+
+        if (request.NewImage != null)
+        {
+            if (book.Image != null)
+            {
+                _fileManager.Delete(book.Image);
+            }
+
+            book.Image = await _fileManager.SaveFileAsync(request.NewImage, IFileManager.Folders.Books, cancellationToken);
+        }
 
 
         var bookDto = new BookDto
@@ -50,11 +62,12 @@ public class UpdateBookHandler : IRequestHandler<UpdateBookCommand, Result>
             Interpreters = book.Interpreters,
             Language = book.Language,
             PublicationDate = book.PublicationDate,
-            Quantity = book.Quantity,
-            Title = book.Title
+            Title = book.Title,
+            Image = book.Image,
+            BookInBranches = book.BookInBranches,
         };
 
-        var elasticResponse = await _elasticsearch.UpdateAsync<BookDto, BookDto>(bookDto, Id.From(bookDto), CancellationToken.None);
+        var elasticResponse = await _elasticsearch.UpdateAsync<BookDto, BookDto>(new Id(book.Id), x => x.Doc(bookDto), CancellationToken.None);
         if (!elasticResponse.IsValidResponse)
         {
             throw new Exception("Failed to update book in elastic");
