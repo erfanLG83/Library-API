@@ -45,7 +45,7 @@ public class ApplicationDbContext : IApplicationDbContext
     public IMongoCollection<Category> Categories => _database.GetCollection<Category>("Categories");
     public IQueryable<Category> CategoriesQuery => Categories.AsQueryable();
 
-    public IMongoCollection<BorrowedBook> BorrowedBooks => _database.GetCollection<BorrowedBook>("BorrowedBookssers");
+    public IMongoCollection<BorrowedBook> BorrowedBooks => _database.GetCollection<BorrowedBook>("BorrowedBooks");
     public IQueryable<BorrowedBook> BorrowedBooksQuery => BorrowedBooks.AsQueryable();
 
     public IMongoCollection<Publisher> Publishers => _database.GetCollection<Publisher>("Publishers");
