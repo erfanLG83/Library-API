@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+src/Api/wwwroot/*
+# exception to the rule
+!src/Api/wwwroot/.gitkeep 

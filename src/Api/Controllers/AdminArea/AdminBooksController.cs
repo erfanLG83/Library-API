@@ -1,9 +1,13 @@
 ﻿using Api.Authorization;
 using Application.Books.Commands.Create;
 using Application.Books.Commands.Delete;
+using Application.Books.Commands.SetBorrowBookReceived;
+using Application.Books.Commands.SetBorrowBookReturned;
 using Application.Books.Commands.Update;
+using Application.Books.Queries.AdminGetBorrowedBooks;
 using Application.Books.Queries.GetAll;
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -50,5 +54,30 @@ public class AdminBooksController : ApiController
         var response = await _mediator.Send(query, CancellationToken);
 
         return Ok(response);
+    }
+
+    [HttpGet("borrowedBooks")]
+    public async Task<ActionResult<AdminGetBorrowedBooksResponse>> GetBorrowedBooks([FromQuery] PaginationDto pagination)
+    {
+        var query = new AdminGetBorrowedBooksQuery(pagination);
+        var response = await _mediator.Send(query, CancellationToken);
+
+        return Ok(response);
+    }
+
+    [HttpPatch("borrowedBooks/{id}/setReturned")]
+    public async Task<ActionResult> SetBorrowedBookReturend([FromRoute] string id)
+    {
+        var command = new SetBorrowBookReturnedCommand(id);
+        await _mediator.Send(command, CancellationToken);
+        return Ok();
+    }
+
+    [HttpPatch("borrowedBooks/{id}/setReceived")]
+    public async Task<ActionResult> SetBorrowedBookReceived([FromRoute] string id)
+    {
+        var command = new SetBorrowBookReceivedCommand(id);
+        await _mediator.Send(command, CancellationToken);
+        return Ok();
     }
 }

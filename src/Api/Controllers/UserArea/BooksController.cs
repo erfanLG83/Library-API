@@ -1,7 +1,9 @@
 ﻿using Application.Books.Commands.BorrowBook;
 using Application.Books.Queries.GetBookDetails;
+using Application.Books.Queries.GetUserBorrowedBooks;
 using Application.Books.Queries.SearchBooks;
 using Application.Common.Interfaces;
+using Application.Common.Models;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -42,5 +44,15 @@ public class BooksController : ApiController
         var result = await _mediator.Send(command, CancellationToken);
 
         return result.ToHttpResponse();
+    }
+
+
+    [HttpGet("borrowedBooks")]
+    public async Task<ActionResult<GetUserBorrowedBooksResponse>> GetUserBorrowedBooks([FromQuery] PaginationDto pagination)
+    {
+        var query = new GetUserBorrowedBooksQuery(_currentUserService.UserId!, pagination);
+        var response = await _mediator.Send(query, CancellationToken);
+
+        return Ok(response);
     }
 }

@@ -38,6 +38,7 @@ public class BorrowBookHandler : IRequestHandler<BorrowBookCommand, Result>
             BookId = request.BookId,
             StartDate = _dateTimeProvider.Now,
             UserId = request.UserId,
+            Branch = request.Branch
         };
 
         await _dbContext.BorrowedBooks.InsertOneAsync(borrowedBook, cancellationToken: cancellationToken);
