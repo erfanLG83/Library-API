@@ -81,7 +81,7 @@ static async Task StartupTasksAsync(IApplicationBuilder app)
         if (countResponse.IsValidResponse == false)
             throw new Exception("Failed to get count of documents from elasticsearch");
 
-        if (true) // feature flag - manual change
+        if (false) // feature flag - manual change
         {
             var mediator = app.ApplicationServices
                 .CreateScope()
