@@ -7,10 +7,8 @@ namespace Domain.Entities.BookAggregate;
 
 public class BorrowedBook : Entity
 {
-    [BsonDateTimeOptions(DateOnly = true, Kind = DateTimeKind.Local, Representation = BsonType.DateTime)]
-    public required DateOnly StartDate { get; set; }
-    [BsonDateTimeOptions(DateOnly = true, Kind = DateTimeKind.Local, Representation = BsonType.DateTime)]
-    public DateOnly? EndDate { get; set; }
+    public required DateTime StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
 
     [BsonRepresentation(BsonType.ObjectId)]
     public required string BookId { get; set; }

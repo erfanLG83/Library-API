@@ -6,7 +6,7 @@ using Domain.Entities.BookAggregate.Enums;
 
 namespace Application.Books.Common.Models;
 
-public class BookDto
+public record BookDto
 {
     public required string Id { get; init; }
     public required string Title { get; set; }
